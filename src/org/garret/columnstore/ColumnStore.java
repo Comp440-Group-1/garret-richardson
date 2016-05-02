@@ -69,7 +69,14 @@ public class ColumnStore {
 	}
 	
 	public static void printDictionaries(ArrayList<ArrayList<String>> dictionaries){
-		
+		for (int i = 0; i < dictionaries.size(); i++){
+			System.out.println("\nDictionary for col # " + i);
+			ArrayList<String> d = dictionaries.get(i); 
+			System.out.println("Key:\t\tValue:");
+			for (int j = 0; j < d.size(); j++){
+				System.out.println(j + "\t\t" + d.get(j));
+			}
+		}
 	}
 	
 	public static void main(String[] args) throws IOException{
@@ -78,7 +85,7 @@ public class ColumnStore {
 		String [][] data = processCSVFile(file);
 		
 		System.out.println("--- Pivoted columns: ---");
-		printDataArray(data);
+		//printDataArray(data);
 		
 		
 		ArrayList<ArrayList<String>> dictionaries = new ArrayList<ArrayList<String>>();
@@ -93,6 +100,7 @@ public class ColumnStore {
 		
 		System.out.println("--- Dictionary compressed ---");
 		printDataArray(data);
+		printDictionaries(dictionaries);
 		
 		
 	}
