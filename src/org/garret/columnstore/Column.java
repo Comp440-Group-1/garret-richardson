@@ -28,8 +28,8 @@ public class Column {
 	}
 	
 	public void printColumn(){
+		System.out.println("Row:\t\t" + header + ":");
 		for (int col = 0; col < data.size(); col++){
-			System.out.println("Key:\t\tValue:");
 			System.out.println(col + "\t\t" + data.get(col));
 		}
 	}
