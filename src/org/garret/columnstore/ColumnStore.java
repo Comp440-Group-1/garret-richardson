@@ -81,7 +81,8 @@ public class ColumnStore {
 	
 	public static void main(String[] args) throws IOException{
 		// TODO Auto-generated method stub
-		File file = new File("C:\\Users\\Allan\\Desktop\\TestCSVprint.csv");
+		File file = new File("/home/garret/Documents/school/2016_spring/comp440/columnStore/sampleData/TestCSVprint.csv");
+		
 		String [][] data = processCSVFile(file);
 		
 		System.out.println("--- Pivoted columns: ---");
