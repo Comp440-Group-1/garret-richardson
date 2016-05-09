@@ -4,6 +4,8 @@ import java.util.*;
 import java.util.zip.Deflater;
 import java.io.*;
 
+import org.garret.columnstore.ColumnCompressor.Dictionary;
+
 import com.opencsv.CSVReader;
 
 public class ColumnStore {
@@ -81,7 +83,7 @@ public class ColumnStore {
 	
 	public static void main(String[] args) throws IOException{
 		// TODO Auto-generated method stub
-		File file = new File("/home/garret/Documents/school/2016_spring/comp440/columnStore/sampleData/TestCSVprint.csv");
+		File file = new File("C:\\Users\\Allan\\workspace\\ColumnStore\\sampleData\\TestCSVprint.csv");
 		
 		String [][] data = processCSVFile(file);
 		
@@ -89,19 +91,20 @@ public class ColumnStore {
 		//printDataArray(data);
 		
 		
-		ArrayList<ArrayList<String>> dictionaries = new ArrayList<ArrayList<String>>();
+		Column [] columns = new Column[data.length];
+		int [] beforeSize = new int[data.length];
+		int [] afterSize = new int[data.length];
+		
+		NaiveDictionary [] dictionaries = new NaiveDictionary[data.length];
+
 		for (int col = 0; col < data.length; col++){
-			System.out.println(Arrays.toString(data[col]));
-			ArrayList<String> dictionary = new ArrayList<String>();
-			for (int row = 1; row < data[col].length; row++){
-				data[col][row] = addToDictionary(data[col][row], dictionary);
-			}
-			dictionaries.add(dictionary);
+			beforeSize[col] = columns[col].estimateSize();
+			dictionaries[col] = ColumnCompressor.dictionaryCompressColumn(columns[col]);
+			afterSize[col] = columns[col].estimateSize();
 		}
 		
 		System.out.println("--- Dictionary compressed ---");
 		printDataArray(data);
-		printDictionaries(dictionaries);
 		
 		
 	}

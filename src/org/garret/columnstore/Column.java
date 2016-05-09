@@ -26,4 +26,11 @@ public class Column {
 		
 		return size;
 	}
+	
+	public void printColumn(){
+		for (int col = 0; col < data.size(); col++){
+			System.out.println("Key:\t\tValue:");
+			System.out.println(col + "\t\t" + data.get(col));
+		}
+	}
 }
