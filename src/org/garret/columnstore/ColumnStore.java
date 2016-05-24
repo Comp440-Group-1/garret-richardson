@@ -10,16 +10,6 @@ import com.opencsv.CSVReader;
 
 public class ColumnStore {
 	
-	public static String addToDictionary(String s, ArrayList<String> dictionary){
-		int location = dictionary.indexOf(s);
-		if (location == -1){
-			dictionary.add(s);
-			location = dictionary.size() - 1;
-		}
-		
-		return Integer.toString(location);
-	}
-	
 	public static int countLines(File file) throws IOException {
 	    InputStream is = new BufferedInputStream(new FileInputStream(file));
 	    try {
@@ -41,6 +31,15 @@ public class ColumnStore {
 	    }
 	}
 	
+	/**
+	 * This function pulls in the CSV file and formats it as a 2D array to make operations on it easier.
+	 * It makes assumptions that the CSV file isn't empty and that all columns are filled out to match the
+	 * length of the header row, or aren't longer.
+	 * 
+	 * @param file - The comma-delimited file object to be turned into a 2D array
+	 * @return String[][]
+	 * @throws IOException
+	 */
 	public static String[][] processCSVFile(File file) throws IOException{
 		CSVReader reader = new CSVReader(new FileReader(file));
 		String [] nextLine;
@@ -48,6 +47,12 @@ public class ColumnStore {
 		int columnCount = nextLine.length;
 		int lineCount = countLines(file);
 		String[][] data = new String [columnCount][lineCount];
+		
+		/**
+		 * We're going to pivot things so we have the first index be the column rather than row.
+		 * This slows down the reading process, but makes it easier to pass columns to compression
+		 * functions, and more closely mimics the way they are held in SQL server anyways.
+		 */
 		
 		for (int row = 0; row < lineCount; row++){
 			for (int col = 0; col < columnCount; col++){
@@ -70,24 +75,13 @@ public class ColumnStore {
 		}
 	}
 	
-	public static void printDictionaries(ArrayList<ArrayList<String>> dictionaries){
-		for (int i = 0; i < dictionaries.size(); i++){
-			System.out.println("\nDictionary for col # " + i);
-			ArrayList<String> d = dictionaries.get(i); 
-			System.out.println("Key:\t\tValue:");
-			for (int j = 0; j < d.size(); j++){
-				System.out.println(j + "\t\t" + d.get(j));
-			}
-		}
-	}
-	
 	public static void main(String[] args) throws IOException{
 		File file = new File("C:\\Users\\Allan\\workspace\\ColumnStore\\sampleData\\TestCSVprint.csv");
 		
 		String [][] data = processCSVFile(file);
 		
 		System.out.println("--- Pivoted columns: ---");
-		//printDataArray(data);
+		printDataArray(data);
 		
 		
 		Column [] columns = new Column[data.length];
