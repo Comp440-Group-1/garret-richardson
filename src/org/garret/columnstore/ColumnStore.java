@@ -71,7 +71,7 @@ public class ColumnStore {
 	
 	public static void printDataArray(String [][] data){
 		for (int col = 0; col < data.length; col++){
-			System.out.println(Arrays.toString(data[col]));
+			System.out.println(col + " -- " + Arrays.toString(data[col]));
 		}
 	}
 	
@@ -100,6 +100,7 @@ public class ColumnStore {
 		int [] beforeSize = new int[data.length];
 		int [] afterSize = new int[data.length];
 		NaiveDictionary [] dictionaries = new NaiveDictionary[data.length];
+		ValueScale [] scales = new ValueScale[data.length];
 		
 		for (int col = 0; col < data.length; col++){
 			columns[col] = new Column(data[col]);
@@ -144,7 +145,7 @@ public class ColumnStore {
 					
 					try {
 						int col = Integer.parseInt(in);
-						if (col < columns.length && col >= 0){
+						if (col < columns.length && col >= 0 && dictionaries[col] != null){
 							dictionaries[col].dictionaryDecompress(columns[col]);
 							columns[col].printColumn();
 							System.out.println("Decompressed size: " + columns[col].estimateSize());
@@ -155,7 +156,50 @@ public class ColumnStore {
 						System.out.println("Invalid column index entered");
 					}
 					break;
+				case "3":
+					System.out.println("Enter the column index (starting at 0): ");
+					in = input.nextLine();
+					if (in.equals("quit")){
+						break;
+					}
+					
+					try {
+						int col = Integer.parseInt(in);
+						System.out.println("Column " + col + " selected.");
+						if (col < columns.length && col >= 0){
+							scales[col] = ColumnCompressor.valueCompressColumn(columns[col]);
+							columns[col].printColumn();
+							System.out.println("Compressed size: " + columns[col].estimateSize());
+						} else {
+							System.out.println("Invalid column index entered");
+						}
+					} catch (NumberFormatException e){
+						System.out.println("Invalid column index entered");
+					}
+					break;
+				case "4":
+					System.out.println("Enter the column index (starting at 0): ");
+					in = input.nextLine();
+					if (in.equals("quit")){
+						break;
+					}
+					
+					try {
+						int col = Integer.parseInt(in);
+						if (col < columns.length && col >= 0 && scales[col] != null){
+							scales[col].decompress(columns[col]);
+							columns[col].printColumn();
+							System.out.println("Decompressed size: " + columns[col].estimateSize());
+						} else {
+							System.out.println("Invalid column index entered");
+						}
+					} catch (NumberFormatException e){
+						System.out.println("Invalid column index entered");
+					}
+					break;
+					
 			}
+			printOptions();
 		}
 		
 		/*for (int col = 0; col < data.length; col++){
