@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class ValueScale {
-	private int scale;
+	private double scale;
 	private int offset;
 	private int min;
 	private int max;
@@ -18,18 +18,18 @@ public class ValueScale {
 			
 			min = Collections.min(values);
 			max = Collections.max(values);
-			
 			if (values.size() > 1){
-				scale = (min - max) / ((int) Math.pow(2, values.size() - 1) );
+				scale = (max - min) / (Math.pow(2, values.size() - 1) );
 			} else {
 				scale = 1;
 			}
-			
-			offset = min + ((int) Math.pow(2, values.size()) - 1)*scale;
+
+			System.out.println("Min: " + min + " Max: " + max + " Scale: " + scale);
+			offset = min;
 			
 			
 			for (int i = 0; i < col.data.size(); i++){
-				values.set(i, Math.round((values.get(i) - offset)/(float) scale));
+				values.set(i, values.get(i) - offset);
 				col.data.set(i, Integer.toString(values.get(i)));
 			}
 		} else {
@@ -40,7 +40,7 @@ public class ValueScale {
 	public void decompress(Column col){
 		for (int i = 0; i < col.data.size(); i++){
 			int packedVal = Integer.parseInt(col.data.get(i));
-			int unpackedVal = packedVal * scale + offset;
+			int unpackedVal = packedVal+ offset;
 			col.data.set(i, Integer.toString(unpackedVal));
 		}
 	}
