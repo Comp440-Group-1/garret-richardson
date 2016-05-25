@@ -5,10 +5,13 @@ import java.util.ArrayList;
 public class Column {
 	public ArrayList<String> data = null;
 	public String header;
+	public String colType;
 	
 	public Column(String[] columnData){
-		header = columnData[0];
-		for (int i = 1; i < columnData.length; i++){
+		data = new ArrayList<String>();
+		colType = columnData[0];
+		header = columnData[1];
+		for (int i = 2; i < columnData.length; i++){
 			data.add(columnData[i]);
 		}
 	}
@@ -28,7 +31,8 @@ public class Column {
 	}
 	
 	public void printColumn(){
-		System.out.println("Row:\t\t" + header + ":");
+		System.out.println("-- Column Data --");
+		System.out.println("Row:\t\t" + header + ":" + "\t\ttype: " + colType);
 		for (int col = 0; col < data.size(); col++){
 			System.out.println(col + "\t\t" + data.get(col));
 		}

@@ -4,14 +4,12 @@ import java.util.ArrayList;
 
 public class ColumnCompressor {	
 	public static NaiveDictionary dictionaryCompressColumn(Column col){
-		NaiveDictionary dic = new NaiveDictionary();
-		for (int i = 0; i < col.data.size(); i++){
-			col.data.set(i, Integer.toString(dic.addToDictionary(col.data.get(i))));
-		}
+		NaiveDictionary dic = new NaiveDictionary(col);
 		return dic;
 	}
 	
-	
-	
-	
+	public static ValueScale valueCompressColumn(Column col){
+		ValueScale valueScale = new ValueScale(col);
+		return valueScale;
+	}
 }

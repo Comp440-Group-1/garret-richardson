@@ -75,8 +75,20 @@ public class ColumnStore {
 		}
 	}
 	
+	public static void printOptions(){
+		System.out.println("Type an option, followed by a newline: ");
+		System.out.println("0 - print all sample data (before compression)");
+		System.out.println("1 - dictionary compress a column, print dictionary");
+		System.out.println("2 - dictionary decompress a column, show result");
+		System.out.println("3 - value compress a column (Integer type only), show result");
+		System.out.println("4 - value decompress a column (Integer type only), show result");
+		System.out.println("quit - end the program");
+	}
+	
+	
 	public static void main(String[] args) throws IOException{
 		File file = new File("C:\\Users\\Allan\\workspace\\ColumnStore\\sampleData\\TestCSVprint.csv");
+		Scanner input = new Scanner(System.in);
 		
 		String [][] data = processCSVFile(file);
 		
@@ -88,20 +100,79 @@ public class ColumnStore {
 		int [] beforeSize = new int[data.length];
 		int [] afterSize = new int[data.length];
 		NaiveDictionary [] dictionaries = new NaiveDictionary[data.length];
-
+		
 		for (int col = 0; col < data.length; col++){
 			columns[col] = new Column(data[col]);
+		}
+		
+		System.out.println("Columnstore Compression");
+		printOptions();
+		String in;
+		while (!(in = input.nextLine()).equals("quit")){
+			switch (in){
+				case "0":
+					printDataArray(data);
+					break;
+				case "1":
+					System.out.println("Enter the column index (starting at 0): ");
+					in = input.nextLine();
+					if (in.equals("quit")){
+						break;
+					}
+					
+					try {
+						int col = Integer.parseInt(in);
+						System.out.println("Column " + col + " selected.");
+						if (col < columns.length && col >= 0){
+							dictionaries[col] = ColumnCompressor.dictionaryCompressColumn(columns[col]);
+							dictionaries[col].printDictionary();
+							columns[col].printColumn();
+							System.out.println("Compressed size: " + columns[col].estimateSize());
+						} else {
+							System.out.println("Invalid column index entered");
+						}
+					} catch (NumberFormatException e){
+						System.out.println("Invalid column index entered");
+					}
+					break;
+				case "2":
+					System.out.println("Enter the column index (starting at 0): ");
+					in = input.nextLine();
+					if (in.equals("quit")){
+						break;
+					}
+					
+					try {
+						int col = Integer.parseInt(in);
+						if (col < columns.length && col >= 0){
+							dictionaries[col].dictionaryDecompress(columns[col]);
+							columns[col].printColumn();
+							System.out.println("Decompressed size: " + columns[col].estimateSize());
+						} else {
+							System.out.println("Invalid column index entered");
+						}
+					} catch (NumberFormatException e){
+						System.out.println("Invalid column index entered");
+					}
+					break;
+			}
+		}
+		
+		/*for (int col = 0; col < data.length; col++){
+			columns[col] = new Column(data[col]);
 			beforeSize[col] = columns[col].estimateSize();
-			System.out.println("-- Uncompressed: --");
+			System.out.println("-- Uncompressed Size: --" + beforeSize[col]);
 			columns[col].printColumn();
 			dictionaries[col] = ColumnCompressor.dictionaryCompressColumn(columns[col]);
 			afterSize[col] = columns[col].estimateSize();
 			System.out.println("-- Compressed Size: --" + afterSize[col]);
 			columns[col].printColumn();
+			System.out.println("Compression ratio (compressed/uncompressed): " 
+					+ ((float) afterSize[col]/ (float) beforeSize[col]));
 			System.out.println("-- Dictionary: --");
 			dictionaries[col].printDictionary();
-		}
+		}*/
 		
-		
+		System.out.println("Closing...");
 	}
 }
